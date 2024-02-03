@@ -1,0 +1,55 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container" id="loginContainer">
+    <form id="loginForm">
+        <h2>Login</h2>
+        <label for="loginUsername">Username:</label>
+        <input type="text" id="loginUsername" name="loginUsername" required>
+
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" name="loginPassword" required>
+
+        <button type="button" onclick="login()">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="#" onclick="showRegistrationForm()">Register here</a></p>
+</div>
+
+<div class="container" id="registrationContainer" style="display: none;">
+    <form id="registrationForm">
+        <h2>Register</h2>
+        <label for="registerUsername">Username:</label>
+        <input type="text" id="registerUsername" name="registerUsername" required>
+
+        <label for="registerPassword">Password:</label>
+        <input type="password" id="registerPassword" name="registerPassword" required>
+
+        <button type="button" onclick="register()">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="#" onclick="showLoginForm()">Login here</a></p>
+</div>
+
+<div class="container" id="userInterface" style="display: none;">
+    <h2>Welcome, <span id="loggedInUsername"></span>!</h2>
+    <p>This is your user interface section.</p>
+    <div>
+        <button onclick="clicker()">Click</button>
+        <p>Total Score: <span id="totalScore">0</span></p>
+    </div>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
