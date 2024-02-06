@@ -1,59 +1,45 @@
-// script.js
+// Install required packages:
+// npm install express passport passport-github express-session
 
-const users = [
-    { username: 'example', password: 'password' }
-];
+const express = require('express');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github').Strategy;
+const session = require('express-session');
 
-let score = 0; // Initialize score
+const app = express();
 
-function login() {
-    var username = document.getElementById('loginUsername').value;
-    var password = document.getElementById('loginPassword').value;
+app.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
-    const user = users.find(u => u.username === username && u.password === password);
+// قم بتعويض هذه المعلومات ببيانات GitHub OAuth الخاصة بك
+const GITHUB_CLIENT_ID = 'your-github-client-id';
+const GITHUB_CLIENT_SECRET = 'your-github-client-secret';
 
-    if (user) {
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('registrationContainer').style.display = 'none';
-        document.getElementById('userInterface').style.display = 'block';
-        document.getElementById('loggedInUsername').innerText = username;
-    } else {
-        alert('Invalid username or password');
-    }
-}
+passport.use(new GitHubStrategy({
+    clientID: GITHUB_CLIENT_ID,
+    clientSecret: GITHUB_CLIENT_SECRET,
+    callbackURL: 'http://localhost:3000/auth/github/callback'
+  },
+  (accessToken, refreshToken, profile, done) => {
+    // هنا، عادةً ما ستقوم بحفظ المستخدم في قاعدة البيانات الخاصة بك
+    // لأغراض التبسيط، سنقوم بتخزين ملف الشخصية من GitHub في الجلسة
+    return done(null, profile);
+  }
+));
 
-function logout() {
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('userInterface').style.display = 'none';
-    // You may want to clear any session or token information here.
-}
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
 
-function showRegistrationForm() {
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('registrationContainer').style.display = 'block';
-}
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
 
-function showLoginForm() {
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('registrationContainer').style.display = 'none';
-}
+app.get('/auth/github',
+  passport.authenticate('github'));
 
-function register() {
-    var newUsername = document.getElementById('registerUsername').value;
-    var newPassword = document.getElementById('registerPassword').value;
-
-    const existingUser = users.find(u => u.username === newUsername);
-
-    if (existingUser) {
-        alert('Username already exists. Please choose a different one.');
-    } else {
-        users.push({ username: newUsername, password: newPassword });
-        alert('Account created for ' + newUsername);
-        showLoginForm();
-    }
-}
-
-function clicker() {
-    score += 1;
-    document.getElementById('totalScore').innerText = score;
-}
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/
